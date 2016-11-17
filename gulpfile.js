@@ -10,6 +10,7 @@ var gulp = require('gulp'),
 gulp.task('css', function () {
     gulp.src(['./css/*.styl'])
         .pipe(stylus({ onError: function (e) { console.log(e); } }))
+        .pipe(concat('main.css'))
         .pipe(gulp.dest('./css/'))
         .pipe(browserSync.reload({ stream: true }));
 });
@@ -30,7 +31,7 @@ gulp.task('html', function () {
 });
 
 
-gulp.task('', ['html', 'css', 'img'], function () {
+gulp.task('serve', ['html', 'css', 'img'], function () {
     browserSync({
         server: {
             baseDir: './'
