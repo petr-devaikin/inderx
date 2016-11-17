@@ -1,3 +1,9 @@
+@font-face
+    font-family 'NTR'
+    font-style normal
+    src url('http://fonts.googleapis.com/css?family=NTR')
+
+
 $screenWidth = 375px
 $screenHeight = 667px
 
@@ -6,19 +12,42 @@ body
     padding 0
     background #000
 
-    font-family Arial
+    font-family 'NTR', sans-serif
 
     *
         box-sizing border-box
 
+
+.m-fullscreen
+    position relative
+    height 100px
+    width 100px
+    background white
+    margin-top 2000px
+
+
 .l-screen
     position fixed
-    left 50%
-    top 50%
-    margin-left -0.5 * $screenWidth
-    margin-top -0.5 * $screenHeight
-    width $screenWidth
-    height $screenHeight
+    left 0
+    top 0
+    width 100%
+    max-width $screenWidth
+    height 100%
+    max-height $screenHeight
     background #fff
+
+    &:after
+        content ''
+        position absolute
+        z-index 1000
+        left 0
+        top 0
+        width 100%
+        height 100%
+        opacity .5
+        background-image url('../img/s_main.PNG')
+        background-size contain
+        background-position center center
+        display block
 
 
