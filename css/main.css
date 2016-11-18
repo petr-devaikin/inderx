@@ -1,11 +1,3 @@
-mixin gradient(a,
-b) {
-  background: b; /* For browsers that do not support gradients */
-  background: -webkit-linear-gradient(a, b); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(a, b); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(a, b); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(a, b); /* Standard syntax */
-}
 
 @font-face {
   font-family: 'NTR';
@@ -52,7 +44,6 @@ body * {
   background-image: url("../img/s_main.jpg");
   background-size: contain;
   background-position: bottom center;
-  display: block;
   background-repeat: no-repeat;
 }
 
@@ -72,22 +63,27 @@ body * {
   width: 55px;
   height: 55px;
 }
-
-mixin gradient(a,
-b) {
-  background: b; /* For browsers that do not support gradients */
-  background: -webkit-linear-gradient(a, b); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(a, b); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(a, b); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(a, b); /* Standard syntax */
+.m-button--like {
+  background-image: url("../img/button_like.jpg");
 }
+.m-button--dislike {
+  background-image: url("../img/button_cross.jpg");
+}
+.m-button--superlike {
+  background-image: url("../img/button_superlike.jpg");
+}
+
 .m-mainview {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  gradient: #fff, #f6f7fb;
+  background: #f6f7fb; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(#fff, #f6f7fb); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#fff, #f6f7fb); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#fff, #f6f7fb); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(#fff, #f6f7fb); /* Standard syntax */
 }
 .m-mainview__header {
   position: absolute;
@@ -95,6 +91,10 @@ b) {
   top: 0;
   width: 100%;
   height: 55px;
+  background-image: url("../img/logo.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 90px;
 }
 .m-mainview__card {
   position: absolute;
@@ -189,16 +189,26 @@ b) {
   transform: translateY(-50%);
   font-size: 22px;
   color: #cecece;
+  padding-left: 30px;
+  background-image: url("../img/icon_interests.jpg");
+  background-size: 26px;
+  background-position: left center;
+  background-repeat: no-repeat;
 }
 .m-card__title__inner__friends {
   position: absolute;
-  right: 100px;
+  right: 85px;
   top: 50%;
   -ms-transform: translateY(-50%);
   -webkit-transform: translateY(-50%);
   transform: translateY(-50%);
   font-size: 22px;
   color: #fd4f68;
+  padding-left: 30px;
+  background-image: url("../img/icon_friends.jpg");
+  background-size: 26px;
+  background-position: left center;
+  background-repeat: no-repeat;
 }
 
 
