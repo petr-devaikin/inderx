@@ -1,14 +1,10 @@
-$headerHeight = 40px
-$footerHeight = 80px
+@import "help"
+
+$headerHeight = 55px
+$footerHeight = 85px
 $mainMargins = 10px
 
-$photoTitleHeight = 40px
-
-
-transform(t)
-    -ms-transform t
-    -webkit-transform t
-    transform t
+$photoTitleHeight = 70px
 
 
 .m-mainview
@@ -17,9 +13,7 @@ transform(t)
     top 0
     width 100%
     height 100%
-    background #eee
-
-    color #000
+    gradient #ffffff, #f6f7fb
 
     &__header
         position absolute
@@ -27,14 +21,13 @@ transform(t)
         top 0
         width 100%
         height $headerHeight
-        background #999
 
     &__card
         position absolute
         left $mainMargins
-        top $mainMargins + $headerHeight
+        top $headerHeight
         right $mainMargins
-        bottom $mainMargins + $footerHeight
+        bottom $footerHeight
 
     &__footer
         position absolute
@@ -42,7 +35,6 @@ transform(t)
         bottom 0
         width 100%
         height $footerHeight
-        background #999
         text-align center
 
         &__inner
@@ -51,6 +43,7 @@ transform(t)
             top 50%
             left 50%
             transform translateX(-50%)
+            width 205px
 
             > *
                 display inline-block
@@ -58,7 +51,7 @@ transform(t)
                 transform translateY(-50%)
 
             .m-button + .m-button
-                margin-left 10px
+                margin-left 25px
 
 
 .m-card
@@ -67,8 +60,8 @@ transform(t)
     top 0
     width 100%
     height 100%
-    border 1px solid #ddd
-    border-radius 10px
+    border 1px solid #e5e5e5
+    border-radius 7px
     overflow hidden
 
     &__photo
@@ -94,16 +87,33 @@ transform(t)
             top 50%
             width 100%
             transform translateY(-50%)
-            padding 0 1.5 * $mainMargins
+            padding 0 2 * $mainMargins
 
             &__name
-                font-size 16px
+                font-size 22px
                 font-weight bold
 
             &__age
-                font-size 16px
+                font-size 22px
 
             &__desc
-                font-size 12px
-                color #888
+                margin-top 2px
+                font-size 14px
+                color $greyColor
+
+            &__interests
+                position absolute
+                right 1.5 * $mainMargins
+                top 50%
+                transform translateY(-50%)
+                font-size 22px
+                color $lightGreyColor
+
+            &__friends
+                position absolute
+                right 100px
+                top 50%
+                transform translateY(-50%)
+                font-size 22px
+                color $pinkColor
 
