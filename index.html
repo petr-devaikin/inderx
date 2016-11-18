@@ -6,7 +6,7 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <script src="js/jquery-3.1.1.js"></script>
-        <script src="js/main.js" defer></script>
+        <script src="js/hammer.min.js"></script>
     </head>
     <body>
         <div class="m-fullscreen"></div>
@@ -15,12 +15,23 @@
                 <div class="m-mainview__header">
                 </div>
                 <div class="m-mainview__card">
-                    <div class="m-card">
+                    <div id="backCard" class="m-card">
+                        <div class="m-card__photo" style="background-image: url('img/amy.jpeg')">
+                        </div>
+                        <div class="m-card__title">
+                            <div class="m-card__title__inner">
+                                <span class="m-card__title__inner__name">Robert</span>,
+                                <span class="m-card__title__inner__age">23</span>
+                                <div class="m-card__title__inner__interests">1</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="frontCard" class="m-card">
                         <div class="m-card__photo" style="background-image: url('img/mattia.jpg')">
                         </div>
                         <div class="m-card__title">
                             <div class="m-card__title__inner">
-                                <span class="m-card__title__inner__name">Mattia,</span>
+                                <span class="m-card__title__inner__name">Mattia</span>,
                                 <span class="m-card__title__inner__age">23</span>
                                 <div class="m-card__title__inner__desc">
                                     Humboldt-Universität zu Berlin
@@ -44,5 +55,7 @@
             <div class="m-photos">
             </div>
         </div>
+
+        <script src="js/main.js" defer></script>
     </body>
 </html>
