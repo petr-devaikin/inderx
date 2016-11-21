@@ -140,29 +140,47 @@ body * {
   border: 1px solid #e5e5e5;
   border-radius: 7px;
   overflow: hidden;
+  z-index: 5;
+}
+.m-card--empty {
+  display: none;
 }
 .m-card.released {
-  transition: left 0.1s;
+  transition: left 0.1s, top 0.1s, transform 0.1s;
 }
-.m-card.liked:after {
+.m-card__status {
   content: '';
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background: #f00;
-  opacity: 0.5;
+  background-repeat: no-repeat;
+  background-size: 200px;
+  opacity: 0;
+  z-index: 10;
+  transition: opacity 0.2s;
 }
-.m-card.disliked:after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: #f00;
-  opacity: 0.5;
+.m-card__status--liked {
+  background-image: url("../img/like.png");
+  background-position: left top;
+}
+.m-card__status--disliked {
+  background-image: url("../img/nope.png");
+  background-position: right top;
+}
+.m-card__status--superliked {
+  background-image: url("../img/superlike.png");
+  background-position: center 80%;
+}
+.m-card.liked .m-card__status--liked {
+  opacity: 1;
+}
+.m-card.disliked .m-card__status--disliked {
+  opacity: 1;
+}
+.m-card.superliked .m-card__status--superliked {
+  opacity: 1;
 }
 .m-card__photo {
   position: absolute;
@@ -200,6 +218,21 @@ body * {
   font-size: 14px;
   color: #7e7e7e;
 }
+.m-card__title__inner__friends {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  font-size: 22px;
+  color: #fd4f68;
+  padding-left: 30px;
+  background-image: url("../img/icon_friends.jpg");
+  background-size: 26px;
+  background-position: left center;
+  background-repeat: no-repeat;
+}
 .m-card__title__inner__interests {
   position: absolute;
   right: 15px;
@@ -215,20 +248,7 @@ body * {
   background-position: left center;
   background-repeat: no-repeat;
 }
-.m-card__title__inner__friends {
-  position: absolute;
+.m-card__title__inner__interests + .m-card__title__inner__friends {
   right: 85px;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
-  font-size: 22px;
-  color: #fd4f68;
-  padding-left: 30px;
-  background-image: url("../img/icon_friends.jpg");
-  background-size: 26px;
-  background-position: left center;
-  background-repeat: no-repeat;
 }
-
 

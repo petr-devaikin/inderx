@@ -67,31 +67,51 @@ $photoTitleHeight = 70px
     border 1px solid #e5e5e5
     border-radius 7px
     overflow hidden
+    z-index 5
+
+    &--empty
+        display: none;
 
     &.released
-        transition left .1s
+        transition left .1s, top .1s, transform .1s
+
+    &__status
+        content ''
+        position absolute
+        left 0
+        top 0
+        width 100%
+        height 100%
+        background-repeat no-repeat
+        background-size 200px
+        opacity 0
+        z-index 10
+        transition opacity .2s
+
+        &--liked
+            background-image url('../img/like.png')
+            background-position left top
+
+        &--disliked
+            background-image url('../img/nope.png')
+            background-position right top
+
+        &--superliked
+            background-image url('../img/superlike.png')
+            background-position center 80%
 
     &.liked
-        &:after
-            content ''
-            position absolute
-            left 0
-            top 0
-            width 100%
-            height 100%
-            background red
-            opacity .5
+        .m-card__status--liked
+            opacity 1
 
     &.disliked
-        &:after
-            content ''
-            position absolute
-            left 0
-            top 0
-            width 100%
-            height 100%
-            background red
-            opacity .5
+        .m-card__status--disliked
+            opacity 1
+
+    &.superliked
+        .m-card__status--superliked
+            opacity 1
+
 
     &__photo
         position absolute
@@ -127,6 +147,19 @@ $photoTitleHeight = 70px
                 font-size 14px
                 color $greyColor
 
+            &__friends
+                position absolute
+                right 1.5 * $mainMargins
+                top 50%
+                transform translateY(-50%)
+                font-size 22px
+                color $pinkColor
+                padding-left 30px
+                background-image url('../img/icon_friends.jpg')
+                background-size 26px
+                background-position left center
+                background-repeat no-repeat
+
             &__interests
                 position absolute
                 right 1.5 * $mainMargins
@@ -140,16 +173,6 @@ $photoTitleHeight = 70px
                 background-position left center
                 background-repeat no-repeat
 
-            &__friends
-                position absolute
-                right 85px
-                top 50%
-                transform translateY(-50%)
-                font-size 22px
-                color $pinkColor
-                padding-left 30px
-                background-image url('../img/icon_friends.jpg')
-                background-size 26px
-                background-position left center
-                background-repeat no-repeat
+                & + .m-card__title__inner__friends
+                    right 85px
 
