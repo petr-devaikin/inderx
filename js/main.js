@@ -4,6 +4,8 @@ $(function() {
     addNewCard();
     addNewCard();
     setPanHandler();
+
+    setButtonsHandler();
 });
 
 
@@ -73,18 +75,70 @@ function setPanHandler() {
             }
         }
     });
+
+    frontCard.click(function() {
+        clickCard();
+    })
 }
+
+function setButtonsHandler() {
+    // close info
+
+    $('.m-button--dislike').click(function() {
+        $('.m-card:last').addClass('disliked');
+        setTimeout(function() { dislikeCard(); }, 200);
+    });
+
+    $('.m-button--like').click(function() {
+        $('.m-card:last').addClass('liked');
+        setTimeout(function() { likeCard(); }, 200);
+    });
+
+    $('.m-button--superlike').click(function() {
+        $('.m-card:last').addClass('superliked');
+        setTimeout(function() { superlikeCard(); }, 200);
+    });
+}
+
 
 function likeCard() {
     console.log('LIKE!');
+
+    $('.m-card:last').animate({
+            left: $(window).innerWidth()
+        }, 100, function() {
+            $(this).remove();
+            addNewCard();
+            setPanHandler();
+        });
 }
 
 function dislikeCard() {
     console.log('DISLIKE!');
+
+    $('.m-card:last').animate({
+            left: -$(window).innerWidth()
+        }, 100, function() {
+            $(this).remove();
+            addNewCard();
+            setPanHandler();
+        });
 }
 
 function superlikeCard() {
     console.log('SUPERLIKE!');
+
+    $('.m-card:last').animate({
+            top: -$(window).innerHeight()
+        }, 100, function() {
+            $(this).remove();
+            addNewCard();
+            setPanHandler();
+        });
+}
+
+function clickCard() {
+    console.log('CLICK CARD!');
 }
 
 function addNewCard() {
@@ -110,15 +164,13 @@ function addNewCard() {
         $('.m-card__title__inner__friends', newCard).text(data.friends);
 
     emptyCard.after(newCard);
-
-    console.log(data);
 }
 
 //=========================
 var counter = 0;
 function getNextCard() {
     return {
-        photo: 'img/mattia.jpg',
+        photo: ['img/mattia.jpg', 'img/amy.jpeg'][Math.floor(Math.random() * 2)],
         name: ['Mattia', 'Helena', 'Olga', 'Tobias', 'Alexander'][Math.floor(Math.random() * 5)],
         desc: ['TU Berlin', ''][Math.floor(Math.random() * 2)],
         age: Math.round(Math.random() * 20 + 20),
