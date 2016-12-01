@@ -1,9 +1,6 @@
 var gulp = require('gulp'),
-    runSequence = require('run-sequence'),
-    clean = require('gulp-clean'),
     stylus = require('gulp-stylus'),
-    browserSync = require('browser-sync'),
-    uglify = require('gulp-uglify'),
+    nodemon = require('gulp-nodemon'),
     concat = require('gulp-concat');
 
 
@@ -11,35 +8,37 @@ gulp.task('css', function () {
     gulp.src(['./css/*.styl'])
         .pipe(stylus({ onError: function (e) { console.log(e); } }))
         .pipe(concat('main.css'))
-        .pipe(gulp.dest('./css/'))
-        .pipe(browserSync.reload({ stream: true }));
+        .pipe(gulp.dest('./static/'));
 });
 
 
 gulp.task('img', function () {
-    browserSync.reload({ stream: true });
+    gulp.src(['./img/*.*'])
+        .pipe(gulp.dest('./static/'));
 });
 
 
 gulp.task('js', function () {
-    browserSync.reload({ stream: true });
+    gulp.src(['./js/*.*'])
+        .pipe(gulp.dest('./static/'));
 });
 
 
-gulp.task('html', function () {
-    browserSync.reload({ stream: true });
-});
+gulp.task('serve', function () {
+    var stream = nodemon({
+            script: 'server.js',
+            ext: 'html js styl png jpeg jpg',
+            ignore: 'static/',
+            //watch: ["server.js", "index.html", "css/*.styl", 'img/*', 'js/*'],
+            tasks: ['css', 'img', 'js'],
+        });
 
-
-gulp.task('serve', ['html', 'css', 'img'], function () {
-    browserSync({
-        server: {
-            baseDir: './'
-        }
-    });
-
-    gulp.watch('./css/*.styl', ['css'])
-    gulp.watch('./js/*.js', ['js'])
-    gulp.watch('./img/*.*', ['img'])
-    gulp.watch('./index.html', ['html'])
+    stream
+        .on('restart', function () {
+            console.log('restarted!')
+        })
+        .on('crash', function() {
+            console.error('Application has crashed!\n')
+                stream.emit('restart', 10)  // restart the server in 10 seconds
+        });
 });
