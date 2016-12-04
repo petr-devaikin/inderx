@@ -1,4 +1,5 @@
 var gulp = require('gulp'),
+    fs = require('fs'),
     stylus = require('gulp-stylus'),
     nodemon = require('gulp-nodemon'),
     orm = require('orm'),
@@ -26,6 +27,8 @@ gulp.task('js', function () {
 
 
 gulp.task('initdb', function () {
+    fs.unlinkSync('db.sqlite');
+
     orm.connect("sqlite://db.sqlite", function (err, db) {
         if (err) throw err;
 
@@ -33,7 +36,13 @@ gulp.task('initdb', function () {
             if (err) throw err;
 
             var Participant = db.models.participant;
+            var Friend = db.models.friend;
+            var Interest = db.models.interest;
             var Profile = db.models.profile;
+            var Picture = db.models.picture;
+            var Show = db.models.show;
+            var Action = db.models.action;
+            var Emotion = db.models.emotion;
 
             db.sync(function(err) {
                 if (err) throw err;
@@ -42,14 +51,17 @@ gulp.task('initdb', function () {
 
                 for (var i = 1; i < 10; i++) {
                     Profile.create({
+                        male: ['male', 'female'][Math.floor(Math.random() * 2)],
                         name: ['Mattia', 'Helena', 'Olga', 'Tobias', 'Alexander'][Math.floor(Math.random() * 5)],
                         age: Math.round(Math.random() * 20 + 20),
                         desc: ['TU Berlin', ''][Math.floor(Math.random() * 2)],
                         distance: 2 + Math.round(Math.random() * 20),
                         info: ['', 'bla-bla-bla\nhohoho'][Math.floor(Math.random() * 2)],
-                        interests: ([[], ['Nina Kravitz', 'Techno'], ['TU Berlin', 'EIT Digital', 'Innovations', 'Startups']][Math.floor(Math.random() * 3)]).join(','),
+                        //interests: ([[], ['Nina Kravitz', 'Techno'], ['TU Berlin', 'EIT Digital', 'Innovations', 'Startups']][Math.floor(Math.random() * 3)]).join(','),
                     }, function(err, profiles) {
                         if (err) throw err;
+
+                        // add photos
                     });
                 }
             });

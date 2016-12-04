@@ -12,6 +12,13 @@ app.use(orm.express("sqlite://db.sqlite", {
 
             models.profile = db.models.profile;
             models.participant = db.models.participant;
+            models.friend = db.models.friend;
+            models.interest = db.models.interest;
+            models.profile = db.models.profile;
+            models.picture = db.models.picture;
+            models.show = db.models.show;
+            models.action = db.models.action;
+            models.emotion = db.models.emotion;
 
             next();
         });
@@ -35,56 +42,111 @@ app.get("/", function(req, res) {
     });
 });
 
-var counter = 0;
+
+app.post("/session", function(req, res) {
+    console.log('Start new session. Participant: ' + JSON.stringify(req.body));
+
+    req.models.participant.create({
+        name: req.params.name,
+        registeres: new Date(),
+        preference: req.body.preference
+    }, function(err, participant) {
+        if (err) throw err;
+
+        // add friends
+        // add interests
+
+        res.send(JSON.stringify({ participantId: participant.id }));
+    });
+});
 
 app.get("/next", function(req, res) {
-    console.log('Request new card. Gender: ' + req.params.gender);
+    console.log('Request new card. Gender: ' + req.query.gender);
 
     res.setHeader('Content-Type', 'application/json');
 
     req.models.profile.find(function(err, profiles) {
         var profile = profiles[Math.floor(profiles.length * Math.random())];
 
-        var data = {
-            id: profile.id,
-            name: profile.name,
-            desc: profile.desc,
-            distance: profile.distance + ' kilometers away',
-            info: profile.info,
-            age: profile.age,
-            interests: profile.interests.length ? profile.interests.split(',') : [],
+        // choose interests and friends
+        var interests = [];
+        var friends = [];
 
-            friends: [[], [
-                {
-                    name: 'Braulio Mattia',
-                    image: '/s/mattia.jpg'
-                },
-                {
-                    name: 'Mattia Mattia',
-                    image: '/s/amy.jpeg'
-                },
-                {
-                    name: 'Braulio Mattia',
-                    image: '/s/mattia.jpg'
-                },
-                {
-                    name: 'Mattia Mattia',
-                    image: '/s/mattia.jpg'
-                }
-            ]][Math.floor(Math.random() * 2)],
-            photos: [
-                ['/s/mattia.jpg','/s/amy.jpeg','/s/mattia.jpg','/s/amy.jpeg'],
-                ['/s/amy.jpeg']
-            ][Math.floor(Math.random() * 2)]
-        };
-        res.send(JSON.stringify(data));
+        // create new show
+        req.models.show.create({
+            participant_id: req.query.sessionId,
+            profile_id: profile.id,
+        }, function(err, show) {
+            if (err) throw err;
+
+            var data = {
+                id: profile.id,
+                name: profile.name,
+                desc: profile.desc,
+                distance: profile.distance + ' kilometers away',
+                info: profile.info,
+                age: profile.age,
+                interests: interests,
+                friends: friends,
+                photos: [
+                    ['/s/mattia.jpg','/s/amy.jpeg','/s/mattia.jpg','/s/amy.jpeg'],
+                    ['/s/amy.jpeg']
+                ][Math.floor(Math.random() * 2)]
+            };
+            res.send(JSON.stringify(data));
+        });
     });
 });
 
-app.post("/event", function(req, res) {
-    console.log(req.body);
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('Got Post Data');
+
+app.post("/action", function(req, res) {
+    console.log('New action: ' + JSON.stringify(req.body));
+
+    var show = req.models.show.find({ participant_id: req.body.sessionId, profile_id: req.body.targetId }, function(err, shows) {
+        if (err) throw err;
+
+        if (shows.length == 0) {
+            res.writeHead(500, {'Content-Type': 'text/plain'});
+            res.end('Cannot find a show');
+        }
+        else {
+            var show = shows[0];
+
+            if (req.body.type == 'new profile') {
+                show.start = new Date();
+                show.save(function(err) {
+                    if (err) throw err;
+
+                    res.writeHead(200, {'Content-Type': 'text/plain'});
+                    res.end('Show started');
+                });
+            }
+            else if (req.body.type == 'like' || req.body.type == 'dislike' || req.body.type == 'superlike') {
+                show.finish = new Date();
+                show.result = req.body.type;
+                show.save(function(err) {
+                    if (err) throw err;
+
+                    res.writeHead(200, {'Content-Type': 'text/plain'});
+                    res.end('Show finished');
+                });
+            }
+            else {
+                req.models.action.create({
+                    time: new Date(),
+                    show_id: show.id,
+                    type: req.body.type,
+                    param1: req.body.param1,
+                    param2: req.body.param2,
+                }, function(err) {
+                    if (err) throw err;
+
+                    res.writeHead(200, {'Content-Type': 'text/plain'});
+                    res.end('Action recorded');
+                });
+            }
+        }
+    });
 });
 
 

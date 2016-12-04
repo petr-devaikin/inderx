@@ -1,16 +1,32 @@
 var THRESHOLD = 100;
 var SLIDER_THRESHOLD = 100;
 
-var sessionId = 13;
-var gender = 'male';
-
 var maxPhotos,
     currentPhoto;
 
 var nextData,
     currentData;
 
+
+var participantInfo = {
+    name: '',
+    preference: '',
+    friends: [],
+    interests: []
+}
+
 $(function() {
+    $('.m-startscreen__start').click(function() {
+        participantInfo.preference = $(this).attr('val');
+        startSession(start);
+    })
+});
+
+
+function start() {
+    $('.m-mainview').show();
+    $('.m-startscreen').hide();
+
     getNextCard(true);
     getNextCard();
 
@@ -18,7 +34,7 @@ $(function() {
     setScrollHandler();
 
     setButtonsHandler();
-});
+}
 
 
 function setPanHandler() {
@@ -125,7 +141,7 @@ function setSliderHandler() {
                 left = -$(window).innerWidth() * currentPhoto;
                 container.addClass('released').css('left', left + 'px');
 
-                reportEvent(sessionId, currentData.id, 'go to next photo', { current: currentPhoto+1, total: maxPhotos });
+                reportEvent(currentData.id, 'go to next photo', currentPhoto+1, maxPhotos);
             }
             else if (ev.deltaX > SLIDER_THRESHOLD && currentPhoto > 0) {
                 currentPhoto--;
@@ -135,7 +151,7 @@ function setSliderHandler() {
 
                 left = -$(window).innerWidth() * currentPhoto;
                 container.addClass('released').css('left', left + 'px');
-                reportEvent(sessionId, currentData.id, 'go to prev photo', { current: currentPhoto+1, total: maxPhotos });
+                reportEvent(currentData.id, 'go to prev photo', currentPhoto+1, maxPhotos );
             }
             else {
                 container.addClass('released').css('left', left + 'px');
@@ -178,19 +194,19 @@ function checkAllBlocks() {
     var v = checkVisibility(photos);
     if (photosVisible === undefined || photosVisible != v) {
         photosVisible = v;
-        reportEvent(sessionId, currentData.id, 'scroll', { type: 'photos', visible: v });
+        reportEvent(currentData.id, 'scroll', 'photos', v);
     }
 
     v = checkVisibility(friends);
     if (friendsVisible === undefined || friendsVisible != v) {
         friendsVisible = v;
-        reportEvent(sessionId, currentData.id, 'scroll', { type: 'friends', visible: v });
+        reportEvent(currentData.id, 'scroll', 'friends', v);
     }
 
     v = checkVisibility(interests);
     if (interestsVisible === undefined || interestsVisible != v) {
         interestsVisible = v;
-        reportEvent(sessionId, currentData.id, 'scroll', { type: 'interests', visible: v });
+        reportEvent(currentData.id, 'scroll', 'interests', v);
     }
 }
 
@@ -233,7 +249,7 @@ function setButtonsHandler() {
 
 
 function likeCard() {
-    reportEvent(sessionId, currentData.id, 'like', {});
+    reportEvent(currentData.id, 'like', {});
 
     $('.m-card:last').animate({
             left: $(window).innerWidth()
@@ -246,7 +262,7 @@ function likeCard() {
 }
 
 function dislikeCard() {
-    reportEvent(sessionId, currentData.id, 'dislike', {});
+    reportEvent(currentData.id, 'dislike', {});
 
     $('.m-card:last').animate({
             left: -$(window).innerWidth()
@@ -259,7 +275,7 @@ function dislikeCard() {
 }
 
 function superlikeCard() {
-    reportEvent(sessionId, currentData.id, 'superlike', {});
+    reportEvent(currentData.id, 'superlike', {});
 
     $('.m-card:last').animate({
             top: -$(window).innerHeight()
@@ -276,7 +292,7 @@ function clickCard() {
 }
 
 function showInfo() {
-    reportEvent(sessionId, currentData.id, 'open details', {});
+    reportEvent(currentData.id, 'open details', {});
 
     $('.m-profile')
         .show()
@@ -294,7 +310,7 @@ function closeInfo(muteEvent) {
         return;
 
     if (!muteEvent)
-        reportEvent(sessionId, currentData.id, 'close details', {});
+        reportEvent(currentData.id, 'close details', {});
 
     $('.m-profile').hide();
 }
@@ -415,35 +431,37 @@ function updateCurrentCard() {
 }
 
 function reportCurrentCard() {
-    reportEvent(sessionId, currentData.id, 'new profile', {
-        id: currentData.id,
-        age: currentData.age,
-        photos: currentData.photos.length,
-        friends: currentData.friends.length,
-        interests: currentData.interests.length,
-        hasInfo: currentData.info.length > 0
-    });
+    reportEvent(currentData.id, 'new profile');
 }
 
 //=========================
 var counter = 0;
 function getNextCard(setCurrent) {
-    $.get('/next', { gender: gender }, function(data) {
+    $.get('/next', { sessionId: participantInfo.id, gender: participantInfo.preference }, function(data) {
         addNewCard(data, setCurrent);
     });
 }
 
 
-//=========================
-function reportEvent(sessionId, targetId, type, params) {
-    if (params === undefined)
-        params = {};
+// Create new participant and start session
+function startSession(callback) {
+    $.post('/session', participantInfo, function(data) {
+        participantInfo.id = data.participantId;
+        callback();
+    }, 'json');
+}
 
-    console.log(sessionId + '. ' + targetId + '. ' + type + ': ' + JSON.stringify(params));
-    $.post('/event', {
+
+// Record screen event
+function reportEvent(targetId, type, param1, param2) {
+    var sessionId = participantInfo.id;
+
+    console.log(sessionId + '. ' + targetId + '. ' + type + ': ' + param1 + ', ' + param2);
+    $.post('/action', {
         sessionId: sessionId,
         targetId: targetId,
         type: type,
-        params: params
+        param1: param1,
+        param2: param2
     });
 }
