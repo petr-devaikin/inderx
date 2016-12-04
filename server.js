@@ -72,11 +72,8 @@ app.get("/next", function(req, res) {
         var interests = [];
         var friends = [];
 
-        // create new show
-        req.models.show.create({
-            participant_id: req.query.sessionId,
-            profile_id: profile.id,
-        }, function(err, show) {
+        // get photos
+        profile.getPictures(function(err, pictures) {
             if (err) throw err;
 
             var data = {
@@ -88,12 +85,18 @@ app.get("/next", function(req, res) {
                 age: profile.age,
                 interests: interests,
                 friends: friends,
-                photos: [
-                    ['/s/mattia.jpg','/s/amy.jpeg','/s/mattia.jpg','/s/amy.jpeg'],
-                    ['/s/amy.jpeg']
-                ][Math.floor(Math.random() * 2)]
+                photos: pictures.map(function(p) { return p.url; })
             };
-            res.send(JSON.stringify(data));
+
+            // create new show
+            req.models.show.create({
+                participant_id: req.query.sessionId,
+                profile_id: profile.id,
+            }, function(err, show) {
+                if (err) throw err;
+
+                res.send(JSON.stringify(data));
+            });
         });
     });
 });

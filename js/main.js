@@ -310,7 +310,7 @@ function closeInfo(muteEvent) {
         return;
 
     if (!muteEvent)
-        reportEvent(currentData.id, 'close details', {});
+        reportEvent(currentData.id, 'close details');
 
     $('.m-profile').hide();
 }

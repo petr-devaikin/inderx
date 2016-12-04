@@ -48,22 +48,35 @@ gulp.task('initdb', function () {
                 if (err) throw err;
 
                 // Init data
-
-                for (var i = 1; i < 10; i++) {
-                    Profile.create({
-                        male: ['male', 'female'][Math.floor(Math.random() * 2)],
+                var profiles = [];
+                for (var i = 1; i < 10; i++)
+                    profiles.push({
+                        gender: ['male', 'female'][Math.floor(Math.random() * 2)],
                         name: ['Mattia', 'Helena', 'Olga', 'Tobias', 'Alexander'][Math.floor(Math.random() * 5)],
                         age: Math.round(Math.random() * 20 + 20),
                         desc: ['TU Berlin', ''][Math.floor(Math.random() * 2)],
                         distance: 2 + Math.round(Math.random() * 20),
                         info: ['', 'bla-bla-bla\nhohoho'][Math.floor(Math.random() * 2)],
-                        //interests: ([[], ['Nina Kravitz', 'Techno'], ['TU Berlin', 'EIT Digital', 'Innovations', 'Startups']][Math.floor(Math.random() * 3)]).join(','),
-                    }, function(err, profiles) {
-                        if (err) throw err;
-
-                        // add photos
                     });
-                }
+
+                Profile.create(profiles, function(err, profiles) {
+                    if (err) throw err;
+
+                    var photos = [];
+
+                    for (var i = 0; i < profiles.length; i++) {
+                        for (var j = 0; j < 1 + Math.floor(Math.random() * 6); j++) {
+                            photos.push({
+                                url: ['/s/amy.jpeg', '/s/mattia.jpg'][Math.floor(Math.random() * 2)],
+                                profile_id: profiles[i].id
+                            });
+                        }
+                    }
+
+                    Picture.create(photos, function(err, pictures) {
+                        if (err) throw err;
+                    })
+                });
             });
         });
     });
