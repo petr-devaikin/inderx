@@ -86,7 +86,6 @@ function start() {
     $('.m-startscreen').hide();
 
     getNextCard(true);
-    getNextCard();
 
     setSliderHandler();
     setScrollHandler();
@@ -313,9 +312,10 @@ function likeCard() {
             left: $(window).innerWidth()
         }, 100, function() {
             $(this).remove();
-            updateCurrentCard();
-            getNextCard();
-            setPanHandler();
+            if (updateCurrentCard()) {
+                getNextCard();
+                setPanHandler();
+            }
         });
 }
 
@@ -326,9 +326,10 @@ function dislikeCard() {
             left: -$(window).innerWidth()
         }, 100, function() {
             $(this).remove();
-            updateCurrentCard();
-            getNextCard();
-            setPanHandler();
+            if (updateCurrentCard()) {
+                getNextCard();
+                setPanHandler();
+            }
         });
 }
 
@@ -339,9 +340,10 @@ function superlikeCard() {
             top: -$(window).innerHeight()
         }, 100, function() {
             $(this).remove();
-            updateCurrentCard();
-            getNextCard();
-            setPanHandler();
+            if (updateCurrentCard()) {
+                getNextCard();
+                setPanHandler();
+            }
         });
 }
 
@@ -485,7 +487,15 @@ function addNewCard(data, setCurrent) {
 
 function updateCurrentCard() {
     currentData = nextData;
-    reportCurrentCard();
+
+    if (currentData === undefined) {
+        $('.m-mainview__footer').hide();
+        $('.m-mainview__thankyou').show();
+        return false;
+    }
+    else
+        reportCurrentCard();
+    return true;
 }
 
 function reportCurrentCard() {
@@ -496,7 +506,15 @@ function reportCurrentCard() {
 var counter = 0;
 function getNextCard(setCurrent) {
     $.get('/next', { sessionId: participantInfo.id, gender: participantInfo.preference }, function(data) {
-        addNewCard(data, setCurrent);
+        if (data.end !== undefined)
+            nextData = undefined;
+        else {
+            addNewCard(data, setCurrent);
+            if (setCurrent !== undefined) {
+                console.log('request second card');
+                getNextCard();
+            }
+        }
     });
 }
 

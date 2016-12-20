@@ -40,7 +40,7 @@ module.exports = function (db, cb) {
         finish : Date
     });
 
-    Show.hasOne('participant', Participant, { reverse: 'shows' });
+    Show.hasOne('participant', Participant, { reverse: 'shows', autoFetch : true });
     Show.hasOne('profile', Profile);
     Show.hasMany('interests', Interest);
     Show.hasMany('friends', Friend);
@@ -53,7 +53,7 @@ module.exports = function (db, cb) {
         time: Date
     });
 
-    Action.hasOne('show', Show, { reverse: 'actions '});
+    Action.hasOne('show', Show, { reverse: 'actions' });
 
     var Emotion = db.define('emotion', {
         type : String,
@@ -61,6 +61,9 @@ module.exports = function (db, cb) {
         param2 : String,
         time: Date
     });
+
+
+    Emotion.hasOne('show', Show, { reverse: 'emotions' });
 
     return cb();
 };

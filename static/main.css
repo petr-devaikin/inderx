@@ -84,6 +84,15 @@ body * {
   display: none;
   z-index: 1;
 }
+.m-mainview__thankyou {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  text-align: center;
+  font-size: 40px;
+  z-index: 100;
+  display: none;
+}
 .m-mainview__header {
   position: absolute;
   left: 0;

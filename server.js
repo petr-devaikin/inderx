@@ -106,9 +106,22 @@ app.get("/next", function(req, res) {
         if (participant.preference)
             profileFilter.gender = participant.preference;
 
-        // choose not visited profiles  <------------------- !!!!!!!!!!!!!!!!!!!!!!!
+        var visitedProfileIds = [];
+        var visitedProfiles = participant.shows;
+        if (visitedProfiles !== undefined && visitedProfiles.length) {
+            for (var i = 0; i < visitedProfiles.length; i++)
+                visitedProfileIds.push(visitedProfiles[i].profile_id);
+            profileFilter.id = orm.not_in(visitedProfileIds);
+        }
+
+        // choose not visited profiles + gender filter
         req.models.profile.find(profileFilter, function(err, profiles) {
             if (err) throw err;
+
+            if (profiles.length == 0) {
+                res.send(JSON.stringify({ end: true }));
+                return;
+            }
 
             var profile = profiles[Math.floor(profiles.length * Math.random())];
 
@@ -124,7 +137,6 @@ app.get("/next", function(req, res) {
                     if (err) throw err;
 
                     // select some of friends
-
                     var r = Math.random();
                     var friendsCount = 0;
                     if (r > .9)
@@ -194,7 +206,7 @@ app.get("/next", function(req, res) {
 app.post("/action", function(req, res) {
     console.log('New action: ' + JSON.stringify(req.body));
 
-    var show = req.models.show.find({ participant_id: req.body.sessionId, profile_id: req.body.targetId }, function(err, shows) {
+    req.models.show.find({ participant_id: req.body.sessionId, profile_id: req.body.targetId }, function(err, shows) {
         if (err) throw err;
 
         if (shows.length == 0) {
@@ -237,6 +249,35 @@ app.post("/action", function(req, res) {
                     res.end('Action recorded');
                 });
             }
+        }
+    });
+});
+
+app.post("/emotion", function(req, res) {
+    console.log('New emotion: ' + JSON.stringify(req.body));
+
+    req.models.show.find({ start: orm.ne(null), finish: null }, [ 'id', 'Z' ], 1, function(err, shows) {
+        if (err) throw err;
+
+        if (shows.length == 0) {
+            res.writeHead(500, {'Content-Type': 'text/plain'});
+            res.end('Cannot find a show');
+        }
+        else {
+            var show = shows[0];
+
+            req.models.emotion.create({
+                time: new Date(),
+                show_id: show.id,
+                type: req.body.type,
+                param1: req.body.param1,
+                param2: req.body.param2,
+            }, function(err) {
+                if (err) throw err;
+
+                res.writeHead(200, {'Content-Type': 'text/plain'});
+                res.end('Emotion recorded');
+            });
         }
     });
 });
