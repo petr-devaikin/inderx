@@ -15,12 +15,70 @@ var participantInfo = {
     interests: []
 }
 
-$(function() {
+$(document).ready(function() {
     $('.m-startscreen__start').click(function() {
         participantInfo.preference = $(this).attr('val');
         startSession(start);
-    })
+    });
+
+    $.ajaxSetup({ cache: true });
+    $.getScript('//connect.facebook.net/en_US/sdk.js', function(){
+        FB.init({
+            appId: '909920825808716',
+            version: 'v2.7' // or v2.1, v2.2, v2.3, ...
+        });
+        FB.getLoginStatus(updateStatusCallback);
+    });
+
+    $('.m-startscreen__name').change(function() {
+        participantInfo.name = $('.m-startscreen__name').val();
+        if (participantInfo.name != '')
+            $('.m-startscreen__start').attr('disabled', null);
+        else
+            $('.m-startscreen__start').attr('disabled', 'disabled');
+    });
 });
+
+function updateStatusCallback(status) {
+    console.log(status);
+    if (status.status == "connected") {
+        console.log('logout');
+        FB.logout();
+    }
+
+    $('.m-startscreen__fb').click(function() {
+        FB.login(fbLoginCallback, { scope: 'public_profile,user_friends,user_likes'});
+    });
+}
+
+function fbLoginCallback(user) {
+    FB.api('/me?fields=id,name', function(response) {
+        participantInfo.name = response.name;
+        $('.m-startscreen__name').val(response.name);
+
+        $('.m-startscreen__fb').attr('disabled', 'disabled');
+        $('.m-startscreen__start').attr('disabled', null);
+    });
+
+    FB.api('/me/invitable_friends?limit=100', function(response) {
+        participantInfo.friends = [];
+        for (var i=0; i < response.data.length; i++)
+            participantInfo.friends.push({
+                name: response.data[i].name,
+                picture: response.data[i].picture.data.url
+            });
+
+        console.log(participantInfo.friends);
+    });
+
+    FB.api('/me/likes?limit=100', function(response) {
+        participantInfo.interests = [];
+        for (var i=0; i < response.data.length; i++)
+            participantInfo.interests.push({ name: response.data[i].name });
+
+        console.log(participantInfo.interests);
+    });
+}
 
 
 function start() {
@@ -363,7 +421,7 @@ function addNewCard(data, setCurrent) {
             for (var i in currentData.friends) {
                 var friend = currentData.friends[i];
                 var f = $('<div class="m-profile__friends__friend">');
-                f.append($('<div class="m-profile__friends__friend__photo">').css('background-image', 'url(' + friend.image + ')'));
+                f.append($('<div class="m-profile__friends__friend__photo">').css('background-image', 'url(' + friend.picture + ')'));
                 f.append(friend.name);
                 $('.m-profile__friends__container').append(f);
             }
@@ -379,7 +437,7 @@ function addNewCard(data, setCurrent) {
             $('.m-profile__interests__counter').text(c + ' interest' + ((c > 1) ? 's' : ''));
             for (var i in currentData.interests) {
                 var interest = currentData.interests[i];
-                var f = $('<div class="m-profile__interests__item">').text(interest);
+                var f = $('<div class="m-profile__interests__item">').text(interest.name);
                 $('.m-profile__interests__items').append(f);
             }
         }

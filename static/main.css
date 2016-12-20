@@ -344,6 +344,7 @@ body * {
   overflow: hidden;
   font-size: 16px;
   color: #7e7e7e;
+  text-align: center;
 }
 .m-profile__friends__friend:nth-child(3n+2) {
   margin-left: 5%;
@@ -433,9 +434,9 @@ body * {
   height: 100%;
   background-image: url("/s/logo.png");
   background-repeat: no-repeat;
-  background-position: center 40px;
+  background-position: center 20px;
   background-size: 90px;
-  padding: 130px 20px 20px;
+  padding: 70px 20px 20px;
 }
 .m-startscreen button {
   width: 100%;
@@ -451,8 +452,11 @@ body * {
 .m-startscreen button.m-startscreen__fb {
   background: #3b5998;
 }
+.m-startscreen button[disabled=disabled] {
+  opacity: 0.3;
+}
 .m-startscreen p {
-  margin: 15px 0;
+  margin: 5px 0;
   font-size: 20px;
   text-align: center;
 }
@@ -464,6 +468,6 @@ body * {
   width: 100%;
 }
 .m-startscreen hr {
-  margin: 50px 0;
+  margin: 20px 0;
   opacity: 0.5;
 }

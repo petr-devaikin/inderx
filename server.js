@@ -3,6 +3,25 @@ var fs = require('fs'),
     orm = require('orm'),
     bodyParser = require('body-parser');
 
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
 var app = express();
 
 app.use(orm.express("sqlite://db.sqlite", {
@@ -44,19 +63,34 @@ app.get("/", function(req, res) {
 
 
 app.post("/session", function(req, res) {
-    console.log('Start new session. Participant: ' + JSON.stringify(req.body));
+    console.log('Start new session. Participant: ' + JSON.stringify(req.body.name));
 
     req.models.participant.create({
-        name: req.params.name,
-        registeres: new Date(),
+        name: req.body.name,
+        registred: new Date(),
         preference: req.body.preference
     }, function(err, participant) {
         if (err) throw err;
 
         // add friends
-        // add interests
+        var friends = req.body.friends !== undefined ? req.body.friends : [];
+        for (var i = 0; i < friends.length; i++)
+            friends[i].participant_id = participant.id;
 
-        res.send(JSON.stringify({ participantId: participant.id }));
+        req.models.friend.create(friends, function(err, fr) {
+            if (err) throw err;
+
+            // add interests
+            var interests = req.body.interests !== undefined ? req.body.interests : [];
+            for (var i = 0; i < interests.length; i++)
+                interests[i].participant_id = participant.id;
+
+            req.models.interest.create(interests, function(err, ints) {
+                if (err) throw err;
+
+                res.send(JSON.stringify({ participantId: participant.id }));
+            });
+        });
     });
 });
 
@@ -65,37 +99,92 @@ app.get("/next", function(req, res) {
 
     res.setHeader('Content-Type', 'application/json');
 
-    req.models.profile.find(function(err, profiles) {
-        var profile = profiles[Math.floor(profiles.length * Math.random())];
+    req.models.participant.get(req.query.sessionId, function(err, participant) {
+        if (err) throw err;
 
-        // choose interests and friends
-        var interests = [];
-        var friends = [];
+        var profileFilter = {};
+        if (participant.preference)
+            profileFilter.gender = participant.preference;
 
-        // get photos
-        profile.getPictures(function(err, pictures) {
+        // choose not visited profiles  <------------------- !!!!!!!!!!!!!!!!!!!!!!!
+        req.models.profile.find(profileFilter, function(err, profiles) {
             if (err) throw err;
 
-            var data = {
-                id: profile.id,
-                name: profile.name,
-                desc: profile.desc,
-                distance: profile.distance + ' kilometers away',
-                info: profile.info,
-                age: profile.age,
-                interests: interests,
-                friends: friends,
-                photos: pictures.map(function(p) { return p.url; })
-            };
+            var profile = profiles[Math.floor(profiles.length * Math.random())];
 
-            // create new show
-            req.models.show.create({
-                participant_id: req.query.sessionId,
-                profile_id: profile.id,
-            }, function(err, show) {
+            participant.getInterests(function(err, interests) {
                 if (err) throw err;
 
-                res.send(JSON.stringify(data));
+                // select some of interests
+                var r = Math.random();
+                var interestsCount = r > .4 ? Math.round((r * r * r) * 5) : 0;
+                interests = shuffle(interests).slice(0, interestsCount);
+
+                participant.getFriends(function(err, friends) {
+                    if (err) throw err;
+
+                    // select some of friends
+
+                    var r = Math.random();
+                    var friendsCount = 0;
+                    if (r > .9)
+                        friendsCount = 3;
+                    else if (r > .8)
+                        friendsCount = 2;
+                    else if (r > .7)
+                        friendsCount = 1;
+                    friends = shuffle(friends).slice(0, friendsCount);
+
+                    // get photos
+                    profile.getPictures(function(err, pictures) {
+                        if (err) throw err;
+
+                        var data = {
+                            id: profile.id,
+                            name: profile.name,
+                            desc: profile.desc,
+                            distance: profile.distance + ' kilometers away',
+                            info: profile.info,
+                            age: profile.age,
+                            interests: interests,
+                            friends: friends,
+                            photos: pictures.map(function(p) { return p.url; })
+                        };
+
+                        // create new show
+                        req.models.show.create({
+                            participant_id: req.query.sessionId,
+                            profile_id: profile.id,
+                        }, function(err, show) {
+                            if (err) throw err;
+
+                            if (interests.length > 0 && friends.length > 0)
+                                show.addInterests(interests, function(err, ints) {
+                                    if (err) throw err;
+
+                                    show.addFriends(friends, function(err, frnds) {
+                                        if (err) throw err;
+
+                                        res.send(JSON.stringify(data));
+                                    });
+                                });
+                            else if (interests.length > 0)
+                                show.addInterests(interests, function(err, ints) {
+                                    if (err) throw err;
+
+                                    res.send(JSON.stringify(data));
+                                });
+                            else if (friends.length > 0)
+                                show.addFriends(friends, function(err, frnds) {
+                                    if (err) throw err;
+
+                                    res.send(JSON.stringify(data));
+                                });
+                            else
+                                res.send(JSON.stringify(data));
+                        });
+                    });
+                });
             });
         });
     });
