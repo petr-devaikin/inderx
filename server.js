@@ -266,13 +266,17 @@ app.post("/emotion", function(req, res) {
         else {
             var show = shows[0];
 
-            req.models.emotion.create({
+            var data = [{
                 time: new Date(),
                 show_id: show.id,
-                type: req.body.type,
-                param1: req.body.param1,
-                param2: req.body.param2,
-            }, function(err) {
+                type: "req.body.type",
+                param1: "req.body.param1",
+                param2: "req.body.param2",
+            }];
+
+            req.models.emotion.create(
+                data,
+            function(err) {
                 if (err) throw err;
 
                 res.writeHead(200, {'Content-Type': 'text/plain'});
