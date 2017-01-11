@@ -27,7 +27,8 @@ gulp.task('js', function () {
 
 
 gulp.task('initdb', function () {
-    fs.unlinkSync('db.sqlite');
+    if (fs.existsSync('db.sqlite'))
+        fs.unlinkSync('db.sqlite');
 
     orm.connect("sqlite://db.sqlite", function (err, db) {
         if (err) throw err;
@@ -49,34 +50,61 @@ gulp.task('initdb', function () {
 
                 // Init data
                 var profiles = [];
-                for (var i = 1; i < 10; i++)
+                var content = fs.readFileSync("grab/men.json");
+                var men = JSON.parse(content);
+                content = fs.readFileSync("grab/women.json");
+                men = men.concat(JSON.parse(content));
+                for (var i = 0; i < men.length; i++) {
+                    var u = men[i];
                     profiles.push({
-                        gender: ['male', 'female'][Math.floor(Math.random() * 2)],
-                        name: ['Mattia', 'Helena', 'Olga', 'Tobias', 'Alexander'][Math.floor(Math.random() * 5)],
-                        age: Math.round(Math.random() * 20 + 20),
-                        desc: ['TU Berlin', ''][Math.floor(Math.random() * 2)],
-                        distance: 2 + Math.round(Math.random() * 20),
-                        info: ['', 'bla-bla-bla\nhohoho'][Math.floor(Math.random() * 2)],
+                        iid: u.id,
+                        gender: u.gender,
+                        name: u.name,
+                        age: u.age,
+                        desc: u.desc,
+                        distance: Math.round(u.distance),
+                        info: u.info,
                     });
+                }
 
-                Profile.create(profiles, function(err, profiles) {
+                Profile.create(profiles, function(err, prfls) {
                     if (err) throw err;
 
-                    var photos = [];
+                    var pictures = [];
 
-                    for (var i = 0; i < profiles.length; i++) {
-                        for (var j = 0; j < 1 + Math.floor(Math.random() * 6); j++) {
-                            photos.push({
-                                url: ['/s/amy.jpeg', '/s/mattia.jpg'][Math.floor(Math.random() * 2)],
-                                profile_id: profiles[i].id
+                    for (var j = 0; j < prfls.length; j++) {
+                        var p = men.find(function(a) { return a.id == prfls[j].iid});
+                        for (var k = 0; k < p.photos.length; k++)
+                            pictures.push({
+                                url: p.photos[k],
+                                profile_id: prfls[j].id
                             });
-                        }
                     }
 
-                    Picture.create(photos, function(err, pictures) {
+                    Picture.create(pictures, function(err) {
                         if (err) throw err;
-                    })
+                    });
                 });
+                /*, function(user) {
+                        return function(err, profile) {
+                            if (err) throw err;
+
+                            for (var j = 0; j < user.photos.length; j++) {
+                                var img = user.photos[j].split('/');
+                                img = img[3] + '_'+ img[4];
+                                Picture.create({
+                                        url: img,
+                                    }, function(err, picture) {
+                                        if (err) throw err;
+                                        //console.log(picture.id);
+                                });
+                            }
+
+
+                        }
+                    }(u)
+                    );
+                }*/
             });
         });
     });

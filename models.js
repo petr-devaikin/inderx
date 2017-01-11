@@ -19,17 +19,18 @@ module.exports = function (db, cb) {
 
 
     var Profile = db.define('profile', {
+        iid : String,
         gender : ['male', 'female'],
         name : String,
         age : Number,
         desc : String,
         info : String,
         distance : Number
-    });
+    }, { cache : false });
 
     var Picture = db.define('picture', {
         url : String
-    });
+    }, { cache : false });
 
     Picture.hasOne('profile', Profile, { reverse: 'pictures' });
 
