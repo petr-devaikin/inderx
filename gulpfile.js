@@ -74,11 +74,14 @@ gulp.task('initdb', function () {
 
                     for (var j = 0; j < prfls.length; j++) {
                         var p = men.find(function(a) { return a.id == prfls[j].iid});
-                        for (var k = 0; k < p.photos.length; k++)
+                        for (var k = 0; k < p.photos.length; k++) {
+                            var url = p.photos[k].split('/');
+                            url = url[3] + '_'+ url[4];
                             pictures.push({
-                                url: p.photos[k],
+                                url: url,
                                 profile_id: prfls[j].id
                             });
+                        }
                     }
 
                     Picture.create(pictures, function(err) {

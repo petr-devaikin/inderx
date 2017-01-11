@@ -160,7 +160,7 @@ app.get("/next", function(req, res) {
                             age: profile.age,
                             interests: interests,
                             friends: friends,
-                            photos: pictures.map(function(p) { return p.url; })
+                            photos: pictures.map(function(p) { return '/s/' + p.url; })
                         };
 
                         // create new show
