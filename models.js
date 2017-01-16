@@ -54,7 +54,7 @@ module.exports = function (db, cb) {
         time: Date
     });
 
-    Action.hasOne('show', Show, { reverse: 'actions' });
+    Action.hasOne('show', Show, { reverse: 'actions', autoFetch : true });
 
     var Emotion = db.define('emotion', {
         type : String,
@@ -64,7 +64,7 @@ module.exports = function (db, cb) {
     });
 
 
-    Emotion.hasOne('show', Show, { reverse: 'emotions' });
+    Emotion.hasOne('show', Show, { reverse: 'emotions', autoFetch : true });
 
     return cb();
 };

@@ -30,13 +30,14 @@ $(document).ready(function() {
         FB.getLoginStatus(updateStatusCallback);
     });
 
+    /*
     $('.m-startscreen__name').change(function() {
         participantInfo.name = $('.m-startscreen__name').val();
         if (participantInfo.name != '')
             $('.m-startscreen__start').attr('disabled', null);
         else
             $('.m-startscreen__start').attr('disabled', 'disabled');
-    });
+    });*/
 });
 
 function updateStatusCallback(status) {

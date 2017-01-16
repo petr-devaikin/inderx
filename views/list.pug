@@ -1,0 +1,22 @@
+doctype html
+html
+  head
+    script(src='../s/d3.js')
+    script
+        | var data =
+        != participants
+    link(
+        rel="stylesheet",
+        type="text/css",
+        href="../s/main.css"
+    )
+  body
+    h1 Participants
+    div(class='m-participants')
+        div(class='m-participant m-participant--header')
+            div(class='m-participant__id') #
+            div(class='m-participant__start') Start
+            div(class='m-participant__pref') Pref.
+            div(class='m-participant__shows') Shows
+
+    script(src='../s/list.js')

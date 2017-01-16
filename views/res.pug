@@ -1,0 +1,29 @@
+doctype html
+html
+  head
+    script(src='../s/d3.js')
+    script
+        | var data =
+        != shows
+        | ; console.log(data)
+    link(
+        rel="stylesheet",
+        type="text/css",
+        href="../s/main.css"
+    )
+  body
+    table(class='m-info')
+        tr
+            th #
+            th Start
+            th Pref.
+            th Shows
+        tr
+            td= user.id
+            td= user.registred.toLocaleString()
+            td= user.preference
+            td= user.shows.length
+
+    div(class='m-shows')
+
+    script(src='../s/res.js')

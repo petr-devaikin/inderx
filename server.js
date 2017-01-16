@@ -23,6 +23,7 @@ function shuffle(array) {
 }
 
 var app = express();
+app.set('view engine', 'pug');
 
 app.use(orm.express("sqlite://db.sqlite", {
     define: function (db, models, next) {
@@ -60,6 +61,25 @@ app.get("/", function(req, res) {
         res.end();
     });
 });
+
+
+app.get("/results/", function(req, res) {
+    req.models.participant.find().all(function(err, participants) {
+        if (err) throw err;
+
+        res.render('list', { participants: JSON.stringify(participants) });
+    });
+})
+
+app.get("/results/:pId", function(req, res) {
+    req.models.participant.get(req.params.pId, function(err, p) {
+        if (err) throw err;
+
+        req.models.show.find({ participant_id: p.id }, function(err, shows) {
+            res.render('res', { user: p, shows: JSON.stringify(shows) });
+        });
+    });
+})
 
 
 app.post("/session", function(req, res) {
@@ -269,9 +289,9 @@ app.post("/emotion", function(req, res) {
             var data = [{
                 time: new Date(),
                 show_id: show.id,
-                type: "req.body.type",
-                param1: "req.body.param1",
-                param2: "req.body.param2",
+                type: req.body[0].type,
+                param1: req.body[0].v1,
+                param2: req.body[0].v2,
             }];
 
             req.models.emotion.create(
