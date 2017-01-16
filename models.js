@@ -30,19 +30,19 @@ module.exports = function (db, cb) {
 
     var Picture = db.define('picture', {
         url : String
-    }, { cache : false });
+    });
 
-    Picture.hasOne('profile', Profile, { reverse: 'pictures' });
+    Picture.hasOne('profile', Profile, { reverse: 'pictures', autoFetch : true});
 
 
     var Show = db.define('show', {
         result : ['like', 'dislike', 'superlike'],
         start : Date,
         finish : Date
-    });
+    }, { autoFetch : true, autoFetchLimit : 2 });
 
     Show.hasOne('participant', Participant, { reverse: 'shows', autoFetch : true });
-    Show.hasOne('profile', Profile);
+    Show.hasOne('profile', Profile, { reverse: 'shows', autoFetch : true });
     Show.hasMany('interests', Interest);
     Show.hasMany('friends', Friend);
 

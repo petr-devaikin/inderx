@@ -3,7 +3,7 @@ var parts = d3.select('.m-participants').selectAll('.m-participant').data(data)
     .enter()
         .append('a')
             .attr('href', function(d) { return d.id; })
-            .attr('target', '_black')
+            //.attr('target', '_black')
             .classed('m-participant', true);
 
 parts.append('div')
@@ -20,4 +20,4 @@ parts.append('div')
 
 parts.append('div')
     .classed('m-participant__shows', true)
-    .text(function (d) { return d.shows.length; });
+    .text(function (d) { return d.shows.filter(function(a) { return a.finish; }).length; });

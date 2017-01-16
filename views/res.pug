@@ -22,8 +22,19 @@ html
             td= user.id
             td= user.registred.toLocaleString()
             td= user.preference
-            td= user.shows.length
+            td= user.shows.filter(function(a) { return a.finish; }).length
 
     div(class='m-shows')
+
+
+    div(class='m-pview')
+        div(class='m-pview__close') x
+        div(class='m-pview__id')
+        div(class='m-pview__name')
+        div(class='m-pview__age')
+        div(class='m-pview__dist')
+        div(class='m-pview__info')
+        div(class='m-pview__desc')
+        div(class='m-pview__photos')
 
     script(src='../s/res.js')

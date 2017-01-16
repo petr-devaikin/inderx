@@ -524,14 +524,14 @@ body * {
 }
 .m-shows {
   margin-top: 50px;
-  padding: 10px;
+  padding: 5px;
 }
 .m-shows .m-show {
   position: relative;
   background: #eee;
   height: 20px;
   margin-bottom: 50px;
-  margin-left: 30px;
+  margin-left: 40px;
 }
 .m-shows .m-show .result {
   position: absolute;
@@ -636,4 +636,39 @@ body * {
   left: -2px;
   bottom: 0;
   background: #8dbb23;
+}
+.m-shows .m-show .profnum {
+  position: absolute;
+  left: -30px;
+  bottom: 0;
+  font-size: 12px;
+  color: #00f;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.m-pview {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  width: 300px;
+  bottom: 10px;
+  border: 1px solid #000;
+  background: rgba(255,255,255,0.9);
+  overflow: auto;
+  font-size: 16px;
+  display: none;
+  padding: 5px;
+}
+.m-pview__close {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  font-size: 20px;
+  cursor: pointer;
+}
+.m-pview__photos {
+  margin-top: 10px;
+}
+.m-pview__photos img {
+  width: 100%;
 }

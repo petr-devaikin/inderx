@@ -35,6 +35,16 @@ shows
         return s + Math.round(res % 60);
     });
 
+shows
+    .append('a')
+    .classed('profnum', true)
+    .text(function(d) {
+        return d.profile_id;
+    })
+    .on('click', function(d) {
+        showProfile(d.profile);
+    })
+
 var actions = shows.selectAll('.action').data(function(d) {
         return d.actions.filter(function(a) {
             return a.type == 'open details' ||
@@ -78,3 +88,32 @@ var emotions = shows.selectAll('.emotion').data(function(d) { return d.emotions;
         var t = new Date(d.time);
         return '&nbsp;' + Math.round((t - start) / 100) / 10;
     });
+
+
+
+function showProfile(d) {
+    console.log(d);
+    d3.select('.m-pview')
+        .style('display', 'block');
+
+
+    d3.select('.m-pview__id').html('Id: ' + d.id);
+    d3.select('.m-pview__name').html('Name: ' + d.name);
+    d3.select('.m-pview__age').html('Age: ' + d.age);
+    d3.select('.m-pview__dist').html('Dist: ' + d.distance);
+    d3.select('.m-pview__desc').html('Desc: ' + d.info);
+    d3.select('.m-pview__info').html('Info: ' + d.desc);
+    d3.select('.m-pview__photos').html('');
+
+    d3.select('.m-pview__photos').selectAll('img').data(d.pictures)
+        .enter()
+        .append('img')
+            .attr('src', function(d) { return '/s/' + d.url; })
+}
+
+function hideProfile() {
+    d3.select('.m-pview')
+        .style('display', 'none');
+}
+
+d3.select('.m-pview__close').on('click', hideProfile);
