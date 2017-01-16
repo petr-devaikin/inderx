@@ -1,7 +1,7 @@
 import json
 import urllib
 
-with open('women.json') as data_file:
+with open('men.json') as data_file:
     men = json.load(data_file)
 
 for m in men:
