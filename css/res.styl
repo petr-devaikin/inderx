@@ -12,15 +12,15 @@
         position relative
         background #eee
         height 20px
-        margin-left 20px
         margin-bottom 50px
+        margin-left 30px
 
         .result
             position absolute
-            left -15px
+            right -15px
             width 10px
             height 10px
-            top 5px
+            bottom 1px
 
             &.like
                 background #48e8bd
@@ -35,6 +35,84 @@
             font-size 12px
             position absolute
             left 100%
-            margin-left 5px
+            margin-left 20px
             bottom 0
             width 100px
+
+        .action
+            position absolute
+            top 15px
+            width 1px
+            height 20px
+            background black
+            font-size 10px
+            color #666
+
+            &--open
+                &:before
+                    content ''
+                    position absolute
+                    bottom 0
+                    left 0
+                    width 7px
+                    height 1px
+                    background black
+
+            &--close
+                &:before
+                    content ''
+                    position absolute
+                    bottom 0
+                    right 0
+                    width 7px
+                    height 1px
+                    background black
+
+            &--next
+                height 10px
+                &:before
+                    content '→'
+                    position absolute
+                    bottom -10px
+                    left -4px
+                    font-size 10px
+
+            &--prev
+                height 10px
+                &:before
+                    content '←'
+                    position absolute
+                    bottom -10px
+                    left -4px
+                    font-size 10px
+
+        .emotion
+            position absolute
+            top -15px
+            width 1px
+            height 20px
+            font-size 10px
+            color #666
+            padding-top 4px
+
+            &--up
+                background #2788f3
+                &:after
+                    content ''
+                    position absolute
+                    width 5px
+                    height 5px
+                    left -2px
+                    top 0
+                    background #2788f3
+
+            &--down
+                background #8dbb23
+                &:after
+                    content ''
+                    position absolute
+                    width 5px
+                    height 5px
+                    left -2px
+                    bottom 0
+                    background #8dbb23
