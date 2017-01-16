@@ -17,6 +17,9 @@ gulp.task('css', function () {
 gulp.task('img', function () {
     gulp.src(['./img/*.*'])
         .pipe(gulp.dest('./static/'));
+
+    gulp.src(['./profiles/*.*'])
+        .pipe(gulp.dest('./static/'));
 });
 
 
