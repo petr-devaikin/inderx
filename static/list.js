@@ -1,5 +1,5 @@
 
-var parts = d3.select('.m-participants').selectAll('.m-participant').data(data)
+var parts = d3.select('.m-participants').selectAll('.m-participant-r').data(data)
     .enter()
         .append('a')
             .attr('href', function(d) { return d.id; })
