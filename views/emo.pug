@@ -1,0 +1,27 @@
+doctype html
+html
+    head
+        meta(name="viewport", content="width=device-width, initial-scale=1.0, minimal-ui")
+        meta(charset="UTF-8")
+        link(href="https://fonts.googleapis.com/css?family=NTR", rel="stylesheet")
+        link(rel="stylesheet", type="text/css", href="/s/main.css")
+
+    body
+        div(class="l-screen")
+            div(class="m-mainview", style="display: block")
+                a(class="m-mainview__header", href="/")
+                div(class="m-mainview__list")
+                    h2 Your Matches
+                    each profile in shows
+                        div(class="m-contact")
+                            div(class="m-contact__photo", style="background-image: url('/s/" + profile.profile.pictures[0].url + "')")
+                            div(class="m-contact__name")= profile.profile.name
+                            div(class="m-contact__emoji")
+                                if (profile.result == 'superlike')
+                                    | 🌟
+                                if (profile.long)
+                                    | 👀
+                                if (profile.smile)
+                                    | 😀
+                                if (profile.frown)
+                                    | 😯

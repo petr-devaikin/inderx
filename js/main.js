@@ -491,7 +491,9 @@ function updateCurrentCard() {
 
     if (currentData === undefined) {
         $('.m-mainview__footer').hide();
-        $('.m-mainview__thankyou').show();
+        $('.m-mainview__thankyou')
+            .attr('href', '/emo/' + participantInfo.id)
+            .show();
         return false;
     }
     else

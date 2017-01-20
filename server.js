@@ -62,6 +62,57 @@ app.get("/", function(req, res) {
     });
 });
 
+app.get("/emo/:pId", function(req, res) {
+    req.models.participant.get(req.params.pId, function(err, p) {
+        if (err) throw err;
+
+        req.models.show.find({ participant_id: p.id }, function(err, shows) {
+            var s = [];
+            var times = [];
+            var ups = [];
+            var lows = [];
+
+            for (var i = 0; i < shows.length; i++)
+                if (shows[i].result != 'dislike') {
+                    shows[i].time = new Date(shows[i].finish) - new Date(shows[i].start);
+                    times.push(shows[i].time);
+                    shows[i].upCount = shows[i].emotions.filter(function(a) { return a.type='ecg_0'; }).length;
+                    ups.push(shows[i].upCount);
+                    shows[i].lowCount = shows[i].emotions.filter(function(a) { return a.type='ecg_1'; }).length;
+                    lows.push(shows[i].lowCount);
+
+                    s.push(shows[i]);
+                }
+
+            var t_t = times[Math.floor(times.length / 2)];
+            var t_u = ups[Math.floor(ups.length / 2)];
+            var t_l = lows[Math.floor(lows.length / 2)];
+
+            for (var i = 0; i < s.length; i++) {
+                s[i].long = s[i].time >= t_t;
+                s[i].smile = s[i].upCount >= t_u;
+                s[i].frown = s[i].lowCount >= t_l;
+            }
+
+            s.sort(function(a, b) {
+                var aa = 0;
+                var bb = 0;
+                if (a.long) aa += 1;
+                if (a.frown) aa += 10;
+                if (a.smile) aa += 100;
+                if (a.result == 'superlike') aa += 1000;
+                if (b.long) bb += 1;
+                if (b.frown) bb += 10;
+                if (b.smile) bb += 100;
+                if (b.result == 'superlike') bb += 1000;
+                return bb - aa;
+            });
+
+            res.render('emo', { user: p, shows: s });
+        });
+    });
+})
+
 
 app.get("/results/", function(req, res) {
     req.models.participant.find().all(function(err, participants) {

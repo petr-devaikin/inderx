@@ -25,6 +25,21 @@ $photoTitleHeight = 70px
         font-size 40px
         z-index 100
         display none
+        text-decoration none
+        color black
+
+    &__list
+        position fixed
+        top $headerHeight
+        bottom 0
+        left 0
+        right 0
+        verticalGradient #ffffff, #f6f7fb
+        z-index 101
+        overflow auto
+
+        h2
+            text-align center
 
     &__header
         position absolute
@@ -186,4 +201,3 @@ $photoTitleHeight = 70px
 
                 & + .m-card__title__inner__friends
                     right 85px
-
